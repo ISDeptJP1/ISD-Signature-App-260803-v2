@@ -1,0 +1,410 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --color-bg: #f6f5f2;
+  --color-bg-elevated: #ffffff;
+  --color-bg-subtle: #eeede8;
+  --color-fg: #14141a;
+  --color-fg-muted: #5c5c68;
+  --color-fg-subtle: #8a8a96;
+  --color-border: #e2e0d8;
+  --color-border-strong: #cfcbc0;
+
+  --color-isd-blue: #151c94;
+  --color-isd-red: #ae0708;
+  --color-isd-yellow: #fbfa1c;
+
+  --color-accent: #1a1a24;
+  --color-accent-fg: #f6f5f2;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+  --font-display: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── ISD motion logo ───────────────────────────────────────────
+   Sharp rectangles, thin black perimeter.
+   Settled → lift → continuous 180° orbit into spin-in (no pause) → hold.
+
+   Timeline:
+     0–12%   settled hold
+     12–20%  lift to orbit
+     20–72%  continuous orbit → spin-in (linear, no handoff pause)
+     72–100% settled hold
+──────────────────────────────────────────────────────────────── */
+
+.isd-stage {
+  --loop: 5s;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.isd-bar {
+  position: absolute;
+  border-radius: 0;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  animation-duration: var(--loop);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.isd-bar--yellow {
+  background: var(--color-isd-yellow);
+  left: 2.17%;
+  top: 2%;
+  width: 27.17%;
+  height: 22%;
+  animation-name: isd-orbit-yellow;
+}
+
+.isd-bar--blue-upper {
+  background: var(--color-isd-blue);
+  left: 42.39%;
+  top: 24%;
+  width: 28.26%;
+  height: 26%;
+  animation-name: isd-orbit-blue-upper;
+}
+
+.isd-bar--red {
+  background: var(--color-isd-red);
+  left: 70.65%;
+  top: 50%;
+  width: 27.17%;
+  height: 22%;
+  animation-name: isd-orbit-red;
+}
+
+.isd-bar--blue-lower {
+  background: var(--color-isd-blue);
+  left: 28.26%;
+  top: 72%;
+  width: 28.26%;
+  height: 26%;
+  animation-name: isd-orbit-blue-lower;
+}
+
+/*
+  Linear throughout orbit + spin-in so motion never decelerates to a stop
+  before the final set. Only the opening lift uses a light ease-in.
+*/
+
+@keyframes isd-orbit-yellow {
+  0%,
+  10% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+  16% {
+    transform: translate(-50%, 45%) rotate(-50deg) scale(0.92);
+    opacity: 0.9;
+    animation-timing-function: linear;
+  }
+  22% {
+    transform: translate(-60%, 20%) rotate(-80deg) scale(0.9);
+    opacity: 0.88;
+  }
+  32% {
+    transform: translate(-55%, -45%) rotate(-120deg) scale(0.9);
+    opacity: 0.88;
+  }
+  42% {
+    transform: translate(5%, -75%) rotate(-160deg) scale(0.9);
+    opacity: 0.88;
+  }
+  52% {
+    transform: translate(70%, -40%) rotate(-200deg) scale(0.9);
+    opacity: 0.88;
+  }
+  /* End of orbit — still linear; immediately continue into spin-in */
+  58% {
+    transform: translate(75%, 25%) rotate(-270deg) scale(0.9);
+    opacity: 0.9;
+  }
+  65% {
+    transform: translate(38%, 14%) rotate(-310deg) scale(0.94);
+    opacity: 0.95;
+  }
+  72%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes isd-orbit-blue-upper {
+  0%,
+  10% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+  16% {
+    transform: translate(55%, -40%) rotate(55deg) scale(0.92);
+    opacity: 0.9;
+    animation-timing-function: linear;
+  }
+  22% {
+    transform: translate(65%, 5%) rotate(90deg) scale(0.9);
+    opacity: 0.88;
+  }
+  32% {
+    transform: translate(40%, 65%) rotate(130deg) scale(0.9);
+    opacity: 0.88;
+  }
+  42% {
+    transform: translate(-25%, 70%) rotate(170deg) scale(0.9);
+    opacity: 0.88;
+  }
+  52% {
+    transform: translate(-75%, 20%) rotate(210deg) scale(0.9);
+    opacity: 0.88;
+  }
+  58% {
+    transform: translate(-55%, -40%) rotate(270deg) scale(0.9);
+    opacity: 0.9;
+  }
+  65% {
+    transform: translate(-24%, -16%) rotate(315deg) scale(0.94);
+    opacity: 0.95;
+  }
+  72%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes isd-orbit-red {
+  0%,
+  10% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+  16% {
+    transform: translate(40%, 55%) rotate(-55deg) scale(0.92);
+    opacity: 0.9;
+    animation-timing-function: linear;
+  }
+  22% {
+    transform: translate(10%, 75%) rotate(-90deg) scale(0.9);
+    opacity: 0.88;
+  }
+  32% {
+    transform: translate(-50%, 55%) rotate(-130deg) scale(0.9);
+    opacity: 0.88;
+  }
+  42% {
+    transform: translate(-70%, -5%) rotate(-170deg) scale(0.9);
+    opacity: 0.88;
+  }
+  52% {
+    transform: translate(-30%, -70%) rotate(-210deg) scale(0.9);
+    opacity: 0.88;
+  }
+  58% {
+    transform: translate(45%, -55%) rotate(-270deg) scale(0.9);
+    opacity: 0.9;
+  }
+  65% {
+    transform: translate(20%, -12%) rotate(-315deg) scale(0.94);
+    opacity: 0.95;
+  }
+  72%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes isd-orbit-blue-lower {
+  0%,
+  10% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+  16% {
+    transform: translate(-55%, 35%) rotate(60deg) scale(0.92);
+    opacity: 0.9;
+    animation-timing-function: linear;
+  }
+  22% {
+    transform: translate(-70%, -5%) rotate(95deg) scale(0.9);
+    opacity: 0.88;
+  }
+  32% {
+    transform: translate(-35%, -70%) rotate(135deg) scale(0.9);
+    opacity: 0.88;
+  }
+  42% {
+    transform: translate(35%, -65%) rotate(175deg) scale(0.9);
+    opacity: 0.88;
+  }
+  52% {
+    transform: translate(75%, -5%) rotate(215deg) scale(0.9);
+    opacity: 0.88;
+  }
+  58% {
+    transform: translate(45%, 60%) rotate(270deg) scale(0.9);
+    opacity: 0.9;
+  }
+  65% {
+    transform: translate(18%, 16%) rotate(315deg) scale(0.94);
+    opacity: 0.95;
+  }
+  72%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.isd-letters {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 6%;
+  margin-top: 0.4rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  font-size: clamp(0.65rem, 2.2vw, 0.8rem);
+  line-height: 1;
+  animation: isd-letters-clarity var(--loop) cubic-bezier(0.45, 0.05, 0.22, 1)
+    infinite;
+}
+
+.isd-letters span:nth-child(1) {
+  color: var(--color-isd-blue);
+}
+.isd-letters span:nth-child(2) {
+  color: var(--color-isd-red);
+}
+.isd-letters span:nth-child(3) {
+  color: var(--color-isd-blue);
+}
+
+@keyframes isd-letters-clarity {
+  0%,
+  8% {
+    opacity: 1;
+    letter-spacing: 0.32em;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  14%,
+  70% {
+    opacity: 0;
+    letter-spacing: 0.55em;
+    transform: translateY(6px);
+    filter: blur(2px);
+  }
+  78%,
+  100% {
+    opacity: 1;
+    letter-spacing: 0.32em;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.isd-stage::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: -8%;
+  border-radius: 12px;
+  background: radial-gradient(
+    ellipse at 55% 50%,
+    color-mix(in oklab, var(--color-isd-blue) 10%, transparent),
+    transparent 65%
+  );
+  opacity: 0;
+  animation: isd-glow var(--loop) linear infinite;
+}
+
+@keyframes isd-glow {
+  0%,
+  8% {
+    opacity: 1;
+  }
+  14%,
+  70% {
+    opacity: 0;
+  }
+  78%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .isd-bar,
+  .isd-letters,
+  .isd-stage::after {
+    animation: none !important;
+  }
+  .isd-bar {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .isd-letters {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    letter-spacing: 0.32em;
+  }
+}
